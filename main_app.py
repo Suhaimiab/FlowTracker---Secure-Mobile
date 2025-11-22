@@ -503,14 +503,15 @@ else:
     </div>
     """
 
-st.markdown(f"""
-<div class="analytics-header" style="display: flex; justify-content: space-between; align-items: center;">
-    <div style="flex: 1;">
-        <h1 style="margin: 0; font-size: 2rem; font-weight: 500; letter-spacing: -0.02em;">📊 Vandatrack Navigator</h1>
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1rem; font-weight: 400;">Advanced Options & Retail Flow Analysis Platform</p>
-    </div>
-    <div style="flex: 0 0 auto; margin-left: 2rem;">
-        {logo_html}
+st.markdown("""
+<div class="analytics-header">
+    <div style="text-align: center;">
+        <h1 style="margin: 0; font-size: 1.5rem; font-weight: 500; line-height: 1.3;">
+            📊 VandaTrack Navigator
+        </h1>
+        <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 0.9rem;">
+            Options & Flow Analysis
+        </p>
     </div>
 </div>
 """, unsafe_allow_html=True)
