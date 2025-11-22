@@ -23,20 +23,6 @@ if 'multi_security' in sys.modules:
 def check_password():
     """Returns True if user entered correct password."""
     
-    def password_entered():
-        """Checks whether a password entered by the user is correct."""
-        # Hash the entered password and compare with stored hash
-        entered_hash = hashlib.sha256(st.session_state["password"].encode()).hexdigest()
-        stored_hash = st.secrets.get("password_hash", "")
-        
-        if hmac.compare_digest(entered_hash, stored_hash):
-            st.session_state["password_correct"] = True
-            st.session_state["login_time"] = datetime.now()
-            del st.session_state["password"]  # Don't store password
-        else:
-            st.session_state["password_correct"] = False
-            st.session_state["failed_attempts"] = st.session_state.get("failed_attempts", 0) + 1
-
     # Check if already authenticated
     if st.session_state.get("password_correct", False):
         return True
@@ -52,23 +38,53 @@ def check_password():
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        st.text_input(
+        # Password input
+        password = st.text_input(
             "Enter Password", 
             type="password", 
-            on_change=password_entered, 
-            key="password",
+            key="password_input",
             placeholder="Enter your password"
         )
         
-        if "password_correct" in st.session_state:
-            if not st.session_state["password_correct"]:
-                attempts = st.session_state.get("failed_attempts", 0)
-                st.error(f"🔒 Incorrect password. Attempt {attempts}")
-                
-                if attempts >= 3:
-                    st.warning("⚠️ Multiple failed attempts detected. Please contact administrator.")
+        # Add spacing
+        st.markdown("<br>", unsafe_allow_html=True)
         
+        # Login button - VISIBLE AND PROMINENT
+        login_button = st.button("🔓 LOGIN", type="primary", use_container_width=True)
+        
+        # Process login when button clicked
+        if login_button:
+            if password:
+                # Hash the entered password
+                entered_hash = hashlib.sha256(password.encode()).hexdigest()
+                stored_hash = st.secrets.get("password_hash", "")
+                
+                if hmac.compare_digest(entered_hash, stored_hash):
+                    st.session_state["password_correct"] = True
+                    st.session_state["login_time"] = datetime.now()
+                    st.session_state["failed_attempts"] = 0
+                    st.rerun()
+                else:
+                    st.session_state["password_correct"] = False
+                    st.session_state["failed_attempts"] = st.session_state.get("failed_attempts", 0) + 1
+                    
+                    attempts = st.session_state["failed_attempts"]
+                    st.error(f"🔒 Incorrect password. Attempt {attempts}")
+                    
+                    if attempts >= 3:
+                        st.warning("⚠️ Multiple failed attempts detected. Please contact administrator.")
+            else:
+                st.warning("⚠️ Please enter a password")
+        
+        # Show error if previous attempt failed
+        elif st.session_state.get("password_correct") == False and not login_button:
+            attempts = st.session_state.get("failed_attempts", 0)
+            if attempts > 0:
+                st.error(f"🔒 Incorrect password. Attempt {attempts}")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
         st.caption("🔐 This application is password-protected for security.")
+        st.caption("💡 Tip: Enter password and click LOGIN button")
     
     return False
 
@@ -503,15 +519,14 @@ else:
     </div>
     """
 
-st.markdown("""
-<div class="analytics-header">
-    <div style="text-align: center;">
-        <h1 style="margin: 0; font-size: 1.5rem; font-weight: 500; line-height: 1.3;">
-            📊 VandaTrack Navigator
-        </h1>
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 0.9rem;">
-            Options & Flow Analysis
-        </p>
+st.markdown(f"""
+<div class="analytics-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="flex: 1;">
+        <h1 style="margin: 0; font-size: 2rem; font-weight: 500; letter-spacing: -0.02em;">📊 Vandatrack Navigator</h1>
+        <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1rem; font-weight: 400;">Advanced Options & Retail Flow Analysis Platform</p>
+    </div>
+    <div style="flex: 0 0 auto; margin-left: 2rem;">
+        {logo_html}
     </div>
 </div>
 """, unsafe_allow_html=True)
