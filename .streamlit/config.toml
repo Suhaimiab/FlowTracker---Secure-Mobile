@@ -1,0 +1,27 @@
+[theme]
+primaryColor="#1a73e8"
+backgroundColor="#ffffff"
+secondaryBackgroundColor="#f8f9fa"
+textColor="#202124"
+font="sans serif"
+
+[server]
+headless = true
+port = 8501
+enableCORS = false
+enableXsrfProtection = true
+maxUploadSize = 200
+enableStaticServing = true
+
+[browser]
+gatherUsageStats = false
+serverAddress = "0.0.0.0"
+
+[runner]
+magicEnabled = true
+fastReruns = true
+
+[client]
+showErrorDetails = false
+toolbarMode = "minimal"
+
